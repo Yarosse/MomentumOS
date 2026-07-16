@@ -5,7 +5,7 @@ export type MissionPriority = "primary" | "secondary" | "normal";
 
 export type Engine = { id: string; name: string; status: EngineStatus; stage: string; bottleneck: string; objective: string; targetMonthly?: number; lastProof?: string };
 export type Mission = { id: string; title: string; engineId: string; whyNow: string; minutes: number; status: MissionStatus; kind?: MissionKind; leverage?: number; priority?: MissionPriority; proof?: string };
-export type Review = { id: string; createdAt: string; answers: string[] };
+export type Review = { id: string; createdAt: string; answers: string[]; priorityEngineId?: string; bottleneckEngineId?: string; nextBottleneck?: string; boundary?: string };
 export type MomentumState = { engines: Engine[]; missions: Mission[]; todayBoundary: string[]; reviews: Review[] };
 
 export const initialState: MomentumState = {
