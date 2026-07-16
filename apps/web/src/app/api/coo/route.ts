@@ -37,10 +37,11 @@ export async function POST(request: Request) {
   if (!body || typeof body !== "object") return NextResponse.json({ error: "Некоректний запит." }, { status: 400 });
   const message = typeof body.message === "string" ? body.message.slice(0, 4000) : "";
   const context = body.context ?? {};
+  const maxOutputTokens = Math.max(250, Math.min(800, Number(process.env.OPENAI_COO_MAX_OUTPUT_TOKENS) || 600));
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({ model: process.env.OPENAI_MODEL ?? "gpt-5.4-mini", instructions: SYSTEM_PROMPT, input: JSON.stringify({ userRequest: message, context }), max_output_tokens: 1200 }),
+    body: JSON.stringify({ model: process.env.OPENAI_MODEL ?? "gpt-5.4-mini", instructions: SYSTEM_PROMPT, input: JSON.stringify({ userRequest: message, context }), max_output_tokens: maxOutputTokens }),
   });
   const payload = await response.json() as { output_text?: string; error?: { message?: string } };
   if (!response.ok) return NextResponse.json({ error: payload.error?.message ?? "COO тимчасово недоступний." }, { status: response.status });
