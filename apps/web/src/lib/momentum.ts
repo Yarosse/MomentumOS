@@ -9,7 +9,8 @@ export type Mission = { id: string; title: string; engineId: string; whyNow: str
 export type Review = { id: string; createdAt: string; answers: string[]; priorityEngineId?: string; bottleneckEngineId?: string; nextBottleneck?: string; boundary?: string };
 export type BehaviorEvent = { id: string; date: string; boss: BossId; outcome: "win" | "lost" };
 export type PlayerState = { momentum: number; capacityMinutes: number; focusMinutes: number; trackedDate: string; energy?: number; currentBoss?: BossId; behaviorEvents: BehaviorEvent[] };
-export type MomentumState = { engines: Engine[]; missions: Mission[]; todayBoundary: string[]; reviews: Review[]; player: PlayerState; experimentFocusId?: string };
+export type Skill = { id: string; name: string; level: number; evidence?: string };
+export type MomentumState = { engines: Engine[]; missions: Mission[]; todayBoundary: string[]; reviews: Review[]; player: PlayerState; skills: Skill[]; experimentFocusId?: string };
 
 export const todayKey = () => new Date().toISOString().slice(0, 10);
 
@@ -28,6 +29,9 @@ export const initialState: MomentumState = {
   todayBoundary: ["Не починати новий продукт.", "Не кодити Telegram-гру до перевірки попиту.", "Не відкривати угоду через нудьгу."],
   reviews: [],
   player: { momentum: 50, capacityMinutes: 270, focusMinutes: 0, trackedDate: todayKey(), behaviorEvents: [] },
+  skills: [
+    { id: "discipline", name: "Дисципліна", level: 5 }, { id: "sales", name: "Продажі", level: 5 }, { id: "scalping", name: "Скальпінг", level: 0 }, { id: "arbitrage", name: "Арбітраж", level: 8 }, { id: "community", name: "Ком'юніті", level: 8 }, { id: "english", name: "Англійська", level: 7 }, { id: "ai", name: "AI", level: 7 }, { id: "coding", name: "Програмування", level: 8 }, { id: "negotiation", name: "Переговори", level: 5 }, { id: "risk", name: "Ризик-менеджмент", level: 1 }, { id: "delegation", name: "Делегування", level: 8 }, { id: "finance", name: "Управління фінансами", level: 1 },
+  ],
   experimentFocusId: "telegram",
 };
 
@@ -45,6 +49,7 @@ export const normalizeMomentumState = (saved: MomentumState): MomentumState => (
   })),
   todayBoundary: saved.todayBoundary ?? initialState.todayBoundary,
   reviews: saved.reviews ?? [],
+  skills: initialState.skills.map((defaultSkill) => ({ ...defaultSkill, ...saved.skills?.find((skill) => skill.id === defaultSkill.id) })),
   experimentFocusId: saved.experimentFocusId ?? initialState.experimentFocusId,
   player: (() => {
     const player = { ...initialState.player, ...saved.player, behaviorEvents: saved.player?.behaviorEvents ?? [] };
