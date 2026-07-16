@@ -61,6 +61,16 @@ export default function Home() {
     setState((current) => ({ ...current, missions: [...current.missions, { id: crypto.randomUUID(), title: title.trim(), engineId, whyNow: whyNow.trim(), minutes, status: "planned" }] }));
   };
 
+  const editEngine = (engineId: string) => {
+    const currentEngine = state.engines.find((item) => item.id === engineId);
+    if (!currentEngine) return;
+    const stage = window.prompt("Current stage", currentEngine.stage);
+    if (!stage?.trim()) return;
+    const bottleneck = window.prompt("One current bottleneck", currentEngine.bottleneck);
+    if (!bottleneck?.trim()) return;
+    setState((current) => ({ ...current, engines: current.engines.map((item) => item.id === engineId ? { ...item, stage: stage.trim(), bottleneck: bottleneck.trim() } : item) }));
+  };
+
   if (!hydrated) return <main className="min-h-screen bg-[#0b1020] p-8 text-slate-100">Завантажую Momentum OS…</main>;
 
   return (
@@ -86,7 +96,7 @@ export default function Home() {
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
           <section>
             <h2 className="mb-4 text-lg font-semibold">Альтернативи</h2><div className="space-y-3">{alternatives.slice(0, 2).map((mission) => { const alternativeEngine = state.engines.find((item) => item.id === mission.engineId); return <button key={mission.id} onClick={() => chooseMission(mission)} disabled={Boolean(activeMission)} className="w-full rounded-2xl border border-slate-700 bg-slate-900 p-5 text-left transition hover:border-cyan-300/70 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"><p className="text-sm text-cyan-200">{alternativeEngine?.name} · {mission.minutes} хв</p><p className="mt-1 font-medium leading-6">{mission.title}</p></button>; })}</div>
-            <h2 className="mb-4 mt-8 text-lg font-semibold">Машини</h2><div className="grid gap-3 sm:grid-cols-2">{state.engines.map((item) => <article key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4"><div className="flex items-center justify-between gap-2"><h3 className="font-semibold">{item.name}</h3><span className="rounded-full bg-slate-800 px-2 py-1 text-xs text-slate-300">{item.status}</span></div><p className="mt-3 text-sm text-cyan-200">{item.stage}</p><p className="mt-2 text-sm leading-5 text-slate-400">{item.bottleneck}</p></article>)}</div>
+            <h2 className="mb-4 mt-8 text-lg font-semibold">Машини</h2><div className="grid gap-3 sm:grid-cols-2">{state.engines.map((item) => <article key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4"><div className="flex items-center justify-between gap-2"><h3 className="font-semibold">{item.name}</h3><span className="rounded-full bg-slate-800 px-2 py-1 text-xs text-slate-300">{item.status}</span></div><p className="mt-3 text-sm text-cyan-200">{item.stage}</p><p className="mt-2 text-sm leading-5 text-slate-400">{item.bottleneck}</p><button onClick={() => editEngine(item.id)} className="mt-4 text-sm text-cyan-200 underline underline-offset-4 hover:text-cyan-100">Edit bottleneck</button></article>)}</div>
           </section>
           <aside className="space-y-6"><section className="rounded-2xl border border-rose-400/20 bg-rose-400/5 p-5"><h2 className="font-semibold text-rose-200">Сьогодні не робимо</h2><ul className="mt-3 space-y-2 text-sm leading-6 text-slate-300">{state.todayBoundary.map((item) => <li key={item}>— {item}</li>)}</ul></section><section className="rounded-2xl border border-slate-700 bg-slate-900/60 p-5"><h2 className="font-semibold">Останній доказ</h2><p className="mt-3 text-sm leading-6 text-slate-400">{lastProof ?? "Ще немає. Заверши одну місію з коротким фактом."}</p></section></aside>
         </div>
