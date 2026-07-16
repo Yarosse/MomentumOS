@@ -5,6 +5,7 @@ out/
 
 # Local environment files
 .env*
+!.env.example
 
 # OS/editor noise
 .DS_Store
