@@ -11,7 +11,7 @@ export const rankMissions = (state: MomentumState): RankedMission[] => state.mis
   .flatMap((mission, index) => {
     const engine = state.engines.find((item) => item.id === mission.engineId);
     if (!engine || engine.status === "paused" || engine.status === "retired") return [];
-    if (engine.status === "experiment" && mission.kind !== "validate") return [];
+    if (engine.status === "experiment" && (mission.kind !== "validate" || (state.experimentFocusId && engine.id !== state.experimentFocusId))) return [];
     const reasons = [
       engine.status === "active" ? "активна машина" : "перевірка гіпотези",
       `тип: ${mission.kind === "earn" ? "заробити" : mission.kind === "validate" ? "перевірити" : mission.kind === "build" ? "побудувати" : "покращити"}`,

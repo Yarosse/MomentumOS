@@ -9,7 +9,7 @@ export type Mission = { id: string; title: string; engineId: string; whyNow: str
 export type Review = { id: string; createdAt: string; answers: string[]; priorityEngineId?: string; bottleneckEngineId?: string; nextBottleneck?: string; boundary?: string };
 export type BehaviorEvent = { id: string; date: string; boss: BossId; outcome: "win" | "lost" };
 export type PlayerState = { momentum: number; capacityMinutes: number; focusMinutes: number; trackedDate: string; energy?: number; currentBoss?: BossId; behaviorEvents: BehaviorEvent[] };
-export type MomentumState = { engines: Engine[]; missions: Mission[]; todayBoundary: string[]; reviews: Review[]; player: PlayerState };
+export type MomentumState = { engines: Engine[]; missions: Mission[]; todayBoundary: string[]; reviews: Review[]; player: PlayerState; experimentFocusId?: string };
 
 export const todayKey = () => new Date().toISOString().slice(0, 10);
 
@@ -28,6 +28,7 @@ export const initialState: MomentumState = {
   todayBoundary: ["Не починати новий продукт.", "Не кодити Telegram-гру до перевірки попиту.", "Не відкривати угоду через нудьгу."],
   reviews: [],
   player: { momentum: 50, capacityMinutes: 270, focusMinutes: 0, trackedDate: todayKey(), behaviorEvents: [] },
+  experimentFocusId: "telegram",
 };
 
 export const storageKey = "momentum-os-v1";
@@ -44,6 +45,7 @@ export const normalizeMomentumState = (saved: MomentumState): MomentumState => (
   })),
   todayBoundary: saved.todayBoundary ?? initialState.todayBoundary,
   reviews: saved.reviews ?? [],
+  experimentFocusId: saved.experimentFocusId ?? initialState.experimentFocusId,
   player: (() => {
     const player = { ...initialState.player, ...saved.player, behaviorEvents: saved.player?.behaviorEvents ?? [] };
     return player.trackedDate === todayKey() ? player : { ...player, focusMinutes: 0, trackedDate: todayKey(), currentBoss: undefined };
