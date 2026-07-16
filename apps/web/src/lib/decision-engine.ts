@@ -6,6 +6,7 @@ const kindScore: Record<NonNullable<Mission["kind"]>, number> = { earn: 55, vali
 const priorityScore: Record<NonNullable<Mission["priority"]>, number> = { primary: 50, secondary: 20, normal: 0 };
 
 export const rankMissions = (state: MomentumState): RankedMission[] => state.missions
+  .filter(() => state.player.focusMinutes < state.player.capacityMinutes)
   .filter((mission) => mission.status === "planned")
   .flatMap((mission, index) => {
     const engine = state.engines.find((item) => item.id === mission.engineId);
