@@ -10,6 +10,8 @@ export default function Home() {
   const [state, setState] = useState<MomentumState>(copyInitialState);
   const [hydrated, setHydrated] = useState(false);
   const [proof, setProof] = useState("");
+  const [bulkText, setBulkText] = useState("");
+  const [bulkEngine, setBulkEngine] = useState("community");
 
   useEffect(() => {
     const saved = window.localStorage.getItem(storageKey);
@@ -49,6 +51,13 @@ export default function Home() {
     setState(copyInitialState());
   };
 
+  const addMissionList = () => {
+    const titles = bulkText.split("\n").map((item) => item.trim()).filter(Boolean);
+    if (!titles.length) return;
+    setState((current) => ({ ...current, missions: [...current.missions, ...titles.map((title) => ({ id: crypto.randomUUID(), title, engineId: bulkEngine, whyNow: "Додано до черги; уточни причину пріоритету перед стартом.", minutes: 45, status: "planned" as const }))] }));
+    setBulkText("");
+  };
+
   const createMission = () => {
     const title = window.prompt("Mission result");
     if (!title?.trim()) return;
@@ -80,6 +89,8 @@ export default function Home() {
           <div><p className="mb-2 text-xs font-bold tracking-[0.24em] text-cyan-300">MOMENTUM OS · TODAY</p><h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Одна правильна дія.</h1></div>
           <div className="flex gap-4"><Link href="/review" className="w-fit text-sm text-cyan-200 underline underline-offset-4 hover:text-cyan-100">Weekly Review</Link><button onClick={resetDemo} className="w-fit text-sm text-slate-400 underline underline-offset-4 hover:text-slate-200">Скинути демо-дані</button></div>
         </header>
+
+        <section className="mb-5 rounded-2xl p-4"><div className="flex flex-col gap-3 sm:flex-row"><select value={bulkEngine} onChange={(event) => setBulkEngine(event.target.value)} className="rounded-xl border border-slate-300/50 bg-white/60 px-3 py-2 text-slate-800"><option value="scalping">Скальпінг</option><option value="community">Арбітражне ком'юніті</option><option value="telegram">Telegram-гра</option><option value="doors">Двері</option></select><textarea value={bulkText} onChange={(event) => setBulkText(event.target.value)} placeholder="Встав список задач — по одній у рядок" className="min-h-20 flex-1 rounded-xl border border-slate-300/50 bg-white/60 p-3 text-slate-800 placeholder:text-slate-500" /></div><button onClick={addMissionList} className="mt-3 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white">Додати список місій</button></section>
 
         <div className="mb-5 flex justify-end"><button onClick={createMission} className="rounded-lg border border-cyan-300/50 px-3 py-1.5 text-sm text-cyan-200 hover:bg-cyan-300/10">+ New mission</button></div>
 
