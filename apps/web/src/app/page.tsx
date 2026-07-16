@@ -49,6 +49,18 @@ export default function Home() {
     setState(copyInitialState());
   };
 
+  const createMission = () => {
+    const title = window.prompt("Mission result");
+    if (!title?.trim()) return;
+    const engineId = window.prompt(`Engine: ${state.engines.map((item) => item.id).join(", ")}`, "community");
+    if (!engineId || !state.engines.some((item) => item.id === engineId)) return;
+    const whyNow = window.prompt("Why now?");
+    if (!whyNow?.trim()) return;
+    const minutes = Number(window.prompt("Minutes (30-90)", "45"));
+    if (!Number.isFinite(minutes) || minutes < 30 || minutes > 90) return;
+    setState((current) => ({ ...current, missions: [...current.missions, { id: crypto.randomUUID(), title: title.trim(), engineId, whyNow: whyNow.trim(), minutes, status: "planned" }] }));
+  };
+
   if (!hydrated) return <main className="min-h-screen bg-[#0b1020] p-8 text-slate-100">Завантажую Momentum OS…</main>;
 
   return (
@@ -58,6 +70,8 @@ export default function Home() {
           <div><p className="mb-2 text-xs font-bold tracking-[0.24em] text-cyan-300">MOMENTUM OS · TODAY</p><h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Одна правильна дія.</h1></div>
           <div className="flex gap-4"><Link href="/review" className="w-fit text-sm text-cyan-200 underline underline-offset-4 hover:text-cyan-100">Weekly Review</Link><button onClick={resetDemo} className="w-fit text-sm text-slate-400 underline underline-offset-4 hover:text-slate-200">Скинути демо-дані</button></div>
         </header>
+
+        <div className="mb-5 flex justify-end"><button onClick={createMission} className="rounded-lg border border-cyan-300/50 px-3 py-1.5 text-sm text-cyan-200 hover:bg-cyan-300/10">+ New mission</button></div>
 
         <section className="rounded-3xl border border-cyan-300/30 bg-gradient-to-br from-cyan-400/10 to-indigo-400/10 p-6 shadow-2xl shadow-cyan-950/20 sm:p-8">
           <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-cyan-200">One Best Move</p>
