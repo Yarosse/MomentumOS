@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { initialState, storageKey, type Mission, type MomentumState } from "@/lib/momentum";
+import { initialState, normalizeMomentumState, storageKey, type Mission, type MomentumState } from "@/lib/momentum";
 import Link from "next/link";
 
 const copyInitialState = (): MomentumState => JSON.parse(JSON.stringify(initialState));
@@ -15,7 +15,7 @@ export default function Home() {
 
   useEffect(() => {
     const saved = window.localStorage.getItem(storageKey);
-    if (saved) setState(JSON.parse(saved) as MomentumState);
+    if (saved) setState(normalizeMomentumState(JSON.parse(saved) as MomentumState));
     setHydrated(true);
   }, []);
 
@@ -137,7 +137,7 @@ export default function Home() {
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
           <section>
             <h2 className="mb-1 text-lg font-semibold">Черга місій</h2><p className="mb-4 text-sm text-slate-500">Перша в списку — головний пріоритет після поточної місії. Можеш змінити, пересунути або прибрати будь-яку заплановану місію.</p><div className="space-y-3">{alternatives.map((mission, index) => { const alternativeEngine = state.engines.find((item) => item.id === mission.engineId); return <div key={mission.id} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/70 p-4"><span className="w-6 text-center text-sm font-semibold text-cyan-700">{index + 2}</span><button onClick={() => chooseMission(mission)} disabled={Boolean(activeMission)} className="flex-1 text-left disabled:opacity-50"><p className="text-sm text-cyan-700">{alternativeEngine?.name} · {mission.minutes} хв</p><p className="mt-1 font-medium leading-6">{mission.title}</p></button><div className="flex flex-col"><button onClick={() => moveMission(mission.id, -1)} aria-label="Підняти місію" className="px-2 text-slate-500 hover:text-cyan-700">↑</button><button onClick={() => moveMission(mission.id, 1)} aria-label="Опустити місію" className="px-2 text-slate-500 hover:text-cyan-700">↓</button></div><div className="flex flex-col gap-1 text-xs"><button onClick={() => editMission(mission.id)} className="text-cyan-700 hover:text-cyan-900">Змінити</button><button onClick={() => deleteMission(mission.id)} className="text-rose-600 hover:text-rose-800">Прибрати</button></div></div>; })}</div>
-            <h2 className="mb-4 mt-8 text-lg font-semibold">Машини</h2><div className="grid gap-3 sm:grid-cols-2">{state.engines.map((item) => <article key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4"><div className="flex items-center justify-between gap-2"><h3 className="font-semibold">{item.name}</h3><span className="rounded-full bg-slate-800 px-2 py-1 text-xs text-slate-300">{item.status === "active" ? "активна" : "експеримент"}</span></div><p className="mt-3 text-sm text-cyan-200">{item.stage}</p><p className="mt-2 text-sm leading-5 text-slate-400">{item.bottleneck}</p><button onClick={() => editEngine(item.id)} className="mt-4 text-sm text-cyan-200 underline underline-offset-4 hover:text-cyan-100">Змінити вузьке місце</button></article>)}</div>
+            <h2 className="mb-4 mt-8 text-lg font-semibold">Машини</h2><div className="grid gap-3 sm:grid-cols-2">{state.engines.map((item) => <article key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4"><div className="flex items-center justify-between gap-2"><h3 className="font-semibold">{item.name}</h3><span className="rounded-full bg-slate-800 px-2 py-1 text-xs text-slate-300">{item.status === "active" ? "активна" : "експеримент"}</span></div><p className="mt-3 text-sm text-cyan-200">{item.stage}</p><p className="mt-2 text-sm leading-5 text-slate-400">{item.bottleneck}</p><div className="mt-4 flex gap-4"><Link href={`/engines/${item.id}`} className="text-sm text-cyan-200 underline underline-offset-4 hover:text-cyan-100">Відкрити машину</Link><button onClick={() => editEngine(item.id)} className="text-sm text-cyan-200 underline underline-offset-4 hover:text-cyan-100">Змінити вузьке місце</button></div></article>)}</div>
           </section>
           <aside className="space-y-6"><section className="rounded-2xl border border-rose-400/20 bg-rose-400/5 p-5"><h2 className="font-semibold text-rose-200">Сьогодні не робимо</h2><ul className="mt-3 space-y-2 text-sm leading-6 text-slate-300">{state.todayBoundary.map((item) => <li key={item}>— {item}</li>)}</ul></section><section className="rounded-2xl border border-slate-700 bg-slate-900/60 p-5"><h2 className="font-semibold">Останній доказ</h2><p className="mt-3 text-sm leading-6 text-slate-400">{lastProof ?? "Ще немає. Заверши одну місію з коротким фактом."}</p></section></aside>
         </div>

@@ -1,16 +1,16 @@
 export type EngineStatus = "active" | "experiment" | "paused" | "retired";
 export type MissionStatus = "planned" | "active" | "completed";
 
-export type Engine = { id: string; name: string; status: EngineStatus; stage: string; bottleneck: string; objective: string; lastProof?: string };
+export type Engine = { id: string; name: string; status: EngineStatus; stage: string; bottleneck: string; objective: string; targetMonthly?: number; lastProof?: string };
 export type Mission = { id: string; title: string; engineId: string; whyNow: string; minutes: number; status: MissionStatus; proof?: string };
 export type Review = { id: string; createdAt: string; answers: string[] };
 export type MomentumState = { engines: Engine[]; missions: Mission[]; todayBoundary: string[]; reviews: Review[] };
 
 export const initialState: MomentumState = {
   engines: [
-    { id: "scalping", name: "Scalping", status: "active", stage: "Зібрати статистику за правилами", bottleneck: "Немає перевіреної дисципліни та статистики угод", objective: "20 угод за чек-листом із журналом" },
-    { id: "community", name: "Arbitrage community", status: "active", stage: "Зробити онбординг самостійним", bottleneck: "Нових людей не можна масштабувати без ручних пояснень", objective: "Один новачок проходить онбординг без допомоги" },
-    { id: "telegram", name: "Telegram game", status: "experiment", stage: "Підтвердити попит", bottleneck: "Немає доказу, що гравці перейдуть на нову платформу", objective: "Отримати якісні інтерв'ю або тест попиту" },
+    { id: "scalping", name: "Скальпінг", status: "active", stage: "Зібрати статистику за правилами", bottleneck: "Немає перевіреної дисципліни та статистики угод", objective: "20 угод за чек-листом із журналом", targetMonthly: 4000 },
+    { id: "community", name: "Арбітражне ком'юніті", status: "active", stage: "Зробити онбординг самостійним", bottleneck: "Нових людей не можна масштабувати без ручних пояснень", objective: "Один новачок проходить онбординг без допомоги", targetMonthly: 1000 },
+    { id: "telegram", name: "Telegram-гра", status: "experiment", stage: "Підтвердити попит", bottleneck: "Немає доказу, що гравці перейдуть на нову платформу", objective: "Отримати якісні інтерв'ю або тест попиту", targetMonthly: 750 },
     { id: "doors", name: "Doors", status: "experiment", stage: "Підтвердити канал дилерів", bottleneck: "Немає першого підтвердженого дилерського контакту", objective: "Провести одну предметну розмову з потенційним дилером" },
   ],
   missions: [
@@ -23,3 +23,12 @@ export const initialState: MomentumState = {
 };
 
 export const storageKey = "momentum-os-v1";
+
+export const normalizeMomentumState = (saved: MomentumState): MomentumState => ({
+  ...initialState,
+  ...saved,
+  engines: initialState.engines.map((defaultEngine) => ({ ...defaultEngine, ...saved.engines.find((engine) => engine.id === defaultEngine.id), name: defaultEngine.name })),
+  missions: saved.missions ?? initialState.missions,
+  todayBoundary: saved.todayBoundary ?? initialState.todayBoundary,
+  reviews: saved.reviews ?? [],
+});
