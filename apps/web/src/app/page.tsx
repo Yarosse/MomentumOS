@@ -69,6 +69,25 @@ export default function Home() {
     });
   };
 
+  const editMission = (missionId: string) => {
+    const mission = state.missions.find((item) => item.id === missionId);
+    if (!mission || mission.status !== "planned") return;
+    const title = window.prompt("Результат місії", mission.title);
+    if (!title?.trim()) return;
+    const whyNow = window.prompt("Чому це важливо зараз?", mission.whyNow);
+    if (!whyNow?.trim()) return;
+    const minutes = Number(window.prompt("Хвилини (30–90)", String(mission.minutes)));
+    if (!Number.isFinite(minutes) || minutes < 30 || minutes > 90) return;
+    setState((current) => ({ ...current, missions: current.missions.map((item) => item.id === missionId ? { ...item, title: title.trim(), whyNow: whyNow.trim(), minutes } : item) }));
+  };
+
+  const deleteMission = (missionId: string) => {
+    const mission = state.missions.find((item) => item.id === missionId);
+    if (!mission || mission.status !== "planned") return;
+    if (!window.confirm("Прибрати цю місію з черги?")) return;
+    setState((current) => ({ ...current, missions: current.missions.filter((item) => item.id !== missionId) }));
+  };
+
   const createMission = () => {
     const title = window.prompt("Який результат має дати місія?");
     if (!title?.trim()) return;
@@ -117,7 +136,7 @@ export default function Home() {
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
           <section>
-            <h2 className="mb-1 text-lg font-semibold">Черга місій</h2><p className="mb-4 text-sm text-slate-500">Перша в списку — головний пріоритет після поточної місії.</p><div className="space-y-3">{alternatives.map((mission, index) => { const alternativeEngine = state.engines.find((item) => item.id === mission.engineId); return <div key={mission.id} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/70 p-4"><span className="w-6 text-center text-sm font-semibold text-cyan-700">{index + 2}</span><button onClick={() => chooseMission(mission)} disabled={Boolean(activeMission)} className="flex-1 text-left disabled:opacity-50"><p className="text-sm text-cyan-700">{alternativeEngine?.name} · {mission.minutes} хв</p><p className="mt-1 font-medium leading-6">{mission.title}</p></button><div className="flex flex-col"><button onClick={() => moveMission(mission.id, -1)} className="px-2 text-slate-500 hover:text-cyan-700">↑</button><button onClick={() => moveMission(mission.id, 1)} className="px-2 text-slate-500 hover:text-cyan-700">↓</button></div></div>; })}</div>
+            <h2 className="mb-1 text-lg font-semibold">Черга місій</h2><p className="mb-4 text-sm text-slate-500">Перша в списку — головний пріоритет після поточної місії. Можеш змінити, пересунути або прибрати будь-яку заплановану місію.</p><div className="space-y-3">{alternatives.map((mission, index) => { const alternativeEngine = state.engines.find((item) => item.id === mission.engineId); return <div key={mission.id} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/70 p-4"><span className="w-6 text-center text-sm font-semibold text-cyan-700">{index + 2}</span><button onClick={() => chooseMission(mission)} disabled={Boolean(activeMission)} className="flex-1 text-left disabled:opacity-50"><p className="text-sm text-cyan-700">{alternativeEngine?.name} · {mission.minutes} хв</p><p className="mt-1 font-medium leading-6">{mission.title}</p></button><div className="flex flex-col"><button onClick={() => moveMission(mission.id, -1)} aria-label="Підняти місію" className="px-2 text-slate-500 hover:text-cyan-700">↑</button><button onClick={() => moveMission(mission.id, 1)} aria-label="Опустити місію" className="px-2 text-slate-500 hover:text-cyan-700">↓</button></div><div className="flex flex-col gap-1 text-xs"><button onClick={() => editMission(mission.id)} className="text-cyan-700 hover:text-cyan-900">Змінити</button><button onClick={() => deleteMission(mission.id)} className="text-rose-600 hover:text-rose-800">Прибрати</button></div></div>; })}</div>
             <h2 className="mb-4 mt-8 text-lg font-semibold">Машини</h2><div className="grid gap-3 sm:grid-cols-2">{state.engines.map((item) => <article key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4"><div className="flex items-center justify-between gap-2"><h3 className="font-semibold">{item.name}</h3><span className="rounded-full bg-slate-800 px-2 py-1 text-xs text-slate-300">{item.status === "active" ? "активна" : "експеримент"}</span></div><p className="mt-3 text-sm text-cyan-200">{item.stage}</p><p className="mt-2 text-sm leading-5 text-slate-400">{item.bottleneck}</p><button onClick={() => editEngine(item.id)} className="mt-4 text-sm text-cyan-200 underline underline-offset-4 hover:text-cyan-100">Змінити вузьке місце</button></article>)}</div>
           </section>
           <aside className="space-y-6"><section className="rounded-2xl border border-rose-400/20 bg-rose-400/5 p-5"><h2 className="font-semibold text-rose-200">Сьогодні не робимо</h2><ul className="mt-3 space-y-2 text-sm leading-6 text-slate-300">{state.todayBoundary.map((item) => <li key={item}>— {item}</li>)}</ul></section><section className="rounded-2xl border border-slate-700 bg-slate-900/60 p-5"><h2 className="font-semibold">Останній доказ</h2><p className="mt-3 text-sm leading-6 text-slate-400">{lastProof ?? "Ще немає. Заверши одну місію з коротким фактом."}</p></section></aside>
