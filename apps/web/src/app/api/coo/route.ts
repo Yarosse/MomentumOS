@@ -94,10 +94,15 @@ export async function POST(request: Request) {
       text: { format: { type: "json_schema", name: "momentum_coo_plan", strict: true, schema: planSchema } },
     }),
   });
-  const payload = await response.json() as { output_text?: string; error?: { message?: string } };
+  const payload = await response.json() as {
+    output_text?: string;
+    output?: Array<{ content?: Array<{ type?: string; text?: string }> }>;
+    error?: { message?: string };
+  };
   if (!response.ok) return NextResponse.json({ error: payload.error?.message ?? "COO тимчасово недоступний." }, { status: response.status });
   try {
-    const plan = parsePlan(payload.output_text ?? "");
+    const outputText = payload.output_text ?? payload.output?.flatMap((item) => item.content ?? []).find((item) => item.type === "output_text")?.text ?? "";
+    const plan = parsePlan(outputText);
     return NextResponse.json({ plan });
   } catch {
     return NextResponse.json({ error: "COO повернув відповідь у неправильному форматі. Спробуй ще раз." }, { status: 502 });
