@@ -12,6 +12,7 @@ const primaryItems = [
 ];
 
 const moreItems = [
+  { href: "/help", label: "Як користуватися", hint: "Швидкий старт і повна довідка" },
   { href: "/state", label: "Мій профіль", hint: "Енергія, фокус і боси" },
   { href: "/skills", label: "Навички", hint: "Карта сильних сторін" },
   { href: "/memory", label: "Пам'ять", hint: "Факти та патерни" },

@@ -1,0 +1,39 @@
+import Link from "next/link";
+
+type GuideItem = { title: string; href: string; purpose: string; write: string; effect: string; frequency: string };
+
+const guide: GuideItem[] = [
+  { title: "Сьогодні", href: "/", purpose: "Показує одну головну дію та максимум дві альтернативи. Це твій стартовий екран.", write: "Нічого не плануй на весь день. Обери одну місію, виконай її і в кінці залиш короткий доказ.", effect: "Доказ стає пам'яттю системи. Наступні рекомендації COO отримують реальні факти, а не відчуття.", frequency: "Щодня" },
+  { title: "COO", href: "/coo", purpose: "Місце для ситуацій, де незрозуміло, що робити далі або що є найкращим використанням наступної години.", write: "Опиши фактами: скільки є часу, що змінилося, що заважає, між чим обираєш. Не потрібно писати великий план.", effect: "COO бачить твої машини, правила, чергу й релевантні факти та пропонує одну головну місію.", frequency: "Коли є невизначеність" },
+  { title: "Черга", href: "/missions", purpose: "Повний список запланованих місій. Тут можна змінити порядок, тип, важіль і пріоритет.", write: "Додавай лише короткі місії з результатом: 30–90 хвилин. Не «зробити сайт», а «отримати першу заявку».", effect: "Decision Engine використовує чергу, щоб обрати сильну наступну дію для Today.", frequency: "Коли треба спланувати або переставити місії" },
+  { title: "Машини", href: "/#machines", purpose: "Твої напрямки доходу: кожен має стадію, вузьке місце, ціль і докази.", write: "Оновлюй одне реальне вузьке місце, а не список усіх проблем одночасно.", effect: "Місії мають посилювати конкретну машину, а не створювати зайнятість.", frequency: "Коли змінився напрямок або вузьке місце" },
+  { title: "Прогрес", href: "/log", purpose: "Щоденний log, факти по машинах і щотижневий огляд.", write: "У log — зробив / не зробив / зрозумів. У фактах — гроші, доказ, тест, побудований актив або проблема.", effect: "Це дає COO та пам'яті докази прогресу і допомагає бачити повторювані проблеми.", frequency: "Log: 1–2 хв щодня. Review: раз на тиждень" },
+  { title: "Мій профіль", href: "/state", purpose: "Тут Momentum, доступна capacity, енергія та поведінкові боси: нудьга, тільт, перфекціонізм тощо.", write: "Фіксуй не настрій, а ситуацію: наприклад, не відкрив імпульсивну угоду — це перемога над босом.", effect: "Система краще розуміє, коли варто працювати, а коли не приймати ризикових рішень.", frequency: "За потреби" },
+  { title: "Навички", href: "/skills", purpose: "Карта сильних і слабких сторін, які впливають на твої машини.", write: "Оновлюй рівень лише коли є доказ: виконаний результат, новий досвід або стабільна практика.", effect: "Профіль допомагає COO не пропонувати шлях, який зараз не відповідає твоїм ресурсам.", frequency: "Раз на місяць або після сильного результату" },
+  { title: "Пам'ять", href: "/memory", purpose: "Зібрані докази, факти доходу, досягнення і поведінкові патерни.", write: "Вручну майже нічого: вона наповнюється через місії, факти, log і review.", effect: "Показує, що реально стало сильнішим, навіть коли фінансовий результат має затримку.", frequency: "Перегляд раз на тиждень" },
+  { title: "Правила", href: "/rules", purpose: "Твої захисні обмеження: що не можна робити в тільті, нудьзі або без доказу попиту.", write: "Формулюй правило коротко: «Не відкриваю угоду через нудьгу».", effect: "COO отримує правила в контексті та не повинен пропонувати рішення, яке їх порушує.", frequency: "Коли помітив повторювану помилку" },
+  { title: "Рішення", href: "/decisions", purpose: "Журнал важливих виборів: що вирішив, на яких фактах і що вийшло.", write: "Зберігай рішення, які важко буде відновити з пам'яті через місяць.", effect: "Допомагає не повторювати старі суперечки із собою та показує якість мислення.", frequency: "Лише для важливих рішень" },
+  { title: "Ідеї", href: "/backlog", purpose: "Безпечне місце для нових ідей, щоб вони не руйнували поточний фокус.", write: "Одна назва й коротко: яку проблему вирішує. Не починай роботу одразу.", effect: "Ідея не зникає, але не стає місією без перевірки попиту та пріоритету.", frequency: "Кожного разу, коли з'явилась нова ідея" },
+  { title: "Щотижневий огляд", href: "/review", purpose: "Коротка зупинка, щоб змінити наступний тиждень на основі фактів.", write: "Відповідай коротко: що завершив, яка машина стала сильнішою, де застряг, що змінюємо.", effect: "Оновлює пріоритетну машину, вузьке місце та межі наступного тижня.", frequency: "Раз на тиждень, до 10 хв" },
+  { title: "Дані", href: "/backup", purpose: "Експорт та імпорт твоїх локальних даних.", write: "Завантажуй резервну копію перед великими змінами або раз на кілька тижнів.", effect: "Захищає твою пам'ять і прогрес, поки дані ще зберігаються локально у браузері.", frequency: "Раз на 2–4 тижні" },
+];
+
+export default function HelpPage() {
+  return <main className="min-h-screen px-5 py-10 sm:px-8"><div className="mx-auto max-w-3xl">
+    <p className="text-xs font-bold tracking-[.22em] text-cyan-700">MOMENTUM OS · GUIDE</p>
+    <h1 className="mt-3 text-3xl font-semibold text-slate-900">Як користуватися Momentum OS</h1>
+    <p className="mt-3 text-slate-600">Не потрібно вивчати все одразу. Почни з одного циклу, а решта інструментів відкривай лише коли вони справді потрібні.</p>
+
+    <section className="mt-8 rounded-3xl border p-6"><p className="text-sm font-semibold text-cyan-700">ШВИДКИЙ СТАРТ · 3 КРОКИ</p><div className="mt-5 grid gap-3 sm:grid-cols-3">
+      <div className="rounded-2xl border p-4"><p className="text-sm font-semibold text-slate-900">1. Відкрий Today</p><p className="mt-2 text-sm text-slate-600">Побач одну головну дію.</p></div>
+      <div className="rounded-2xl border p-4"><p className="text-sm font-semibold text-slate-900">2. Виконай місію</p><p className="mt-2 text-sm text-slate-600">30–90 хв без перемикань.</p></div>
+      <div className="rounded-2xl border p-4"><p className="text-sm font-semibold text-slate-900">3. Залиш факт</p><p className="mt-2 text-sm text-slate-600">Що сталося або що заблокувало.</p></div>
+    </div><p className="mt-5 text-sm text-slate-600">Не знаєш, що обрати? Відкрий <Link href="/coo" className="font-medium text-cyan-700 underline">COO</Link> і опиши ситуацію.</p></section>
+
+    <section className="mt-6"><h2 className="text-xl font-semibold text-slate-900">Повна довідка</h2><p className="mt-2 text-sm text-slate-600">Відкривай лише потрібний пункт — не треба читати все за один раз.</p><div className="mt-4 space-y-3">
+      {guide.map((item) => <details key={item.title} className="group rounded-2xl border bg-white/70 p-5"><summary className="flex cursor-pointer list-none items-center justify-between gap-4"><span><span className="block font-semibold text-slate-900">{item.title}</span><span className="mt-1 block text-sm text-slate-500">{item.purpose}</span></span><span className="text-slate-400 transition group-open:rotate-180">⌄</span></summary><div className="mt-5 border-t pt-4 text-sm leading-6 text-slate-700"><p><strong>Що вносити:</strong> {item.write}</p><p className="mt-3"><strong>Як це впливає:</strong> {item.effect}</p><p className="mt-3"><strong>Коли відкривати:</strong> {item.frequency}</p><Link href={item.href} className="mt-4 inline-block font-medium text-cyan-700 underline underline-offset-4">Відкрити {item.title} →</Link></div></details>)}
+    </div></section>
+
+    <section className="mt-6 rounded-3xl border border-cyan-200 bg-cyan-50 p-6"><h2 className="text-lg font-semibold text-slate-900">Три правила системи</h2><ol className="mt-3 space-y-2 text-sm leading-6 text-slate-700"><li>1. Не намагайся зробити все: Today показує найкращий наступний крок.</li><li>2. Фіксуй факти, а не настрій: це робить COO точнішим.</li><li>3. COO пропонує, але остаточне рішення та редагування завжди залишаються за тобою.</li></ol></section>
+  </div></main>;
+}
